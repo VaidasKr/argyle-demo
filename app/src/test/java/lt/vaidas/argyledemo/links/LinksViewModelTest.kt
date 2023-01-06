@@ -5,17 +5,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifySequence
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
+import lt.vaidas.argyledemo.MainDispatcherRule
 import lt.vaidas.argyledemo.assertLast
 import lt.vaidas.argyledemo.testFlow
-import org.junit.After
-import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
 
@@ -29,15 +25,8 @@ class LinksViewModelTest {
     }
     private val viewModel: LinksViewModel get() = LinksViewModel(useCase, errorFactory, searchThrottle)
 
-    @Before
-    fun setUp() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     @Test
     fun `WHEN init THEN state has placeholder items`() = runTest {
