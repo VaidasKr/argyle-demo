@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class LinksViewModel(
     private val useCase: LoadLinksUseCase,
@@ -31,8 +32,8 @@ class LinksViewModel(
         _state.update { it.copy(isLoading = true, loadError = null) }
         runCatching { useCase.load(query) }
             .onFailure { cause ->
-                // TODO log cause to timber
                 if (cause !is CancellationException) {
+                    Timber.e(cause)
                     val error = errorFactory.createFor(query)
                     _state.update { it.copy(isLoading = false, loadError = error) }
                 }
