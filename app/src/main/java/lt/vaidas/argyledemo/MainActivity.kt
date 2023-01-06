@@ -8,6 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import lt.vaidas.argyledemo.links.compose.LinksScreen
 import lt.vaidas.argyledemo.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,7 +19,7 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                 rememberSystemUiController().setStatusBarColor(MaterialTheme.colors.background, !isSystemInDarkTheme())
                 Surface {
-                    // content
+                    LinksScreen()
                 }
             }
         }

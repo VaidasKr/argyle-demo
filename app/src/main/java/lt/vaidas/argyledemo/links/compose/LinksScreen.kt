@@ -40,8 +40,7 @@ import lt.vaidas.argyledemo.links.LinksViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LinksScreen() {
-    val viewModel = koinViewModel<LinksViewModel>()
+fun LinksScreen(viewModel: LinksViewModel = koinViewModel()) {
     val linkState by viewModel.state.collectAsState()
     LinksContent(state = linkState, onSearch = viewModel::onQueryChange, onRetry = viewModel::onRetry)
 }

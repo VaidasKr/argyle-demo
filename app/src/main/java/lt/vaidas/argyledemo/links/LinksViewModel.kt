@@ -3,14 +3,18 @@ package lt.vaidas.argyledemo.links
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class LinksViewModel(
     private val useCase: LoadLinksUseCase,
     private val errorFactory: LinkLoadErrorFactory,
@@ -23,10 +27,11 @@ class LinksViewModel(
     val state: StateFlow<LinksState> = _state.asStateFlow()
 
     init {
+        searchThrottle.requestFlow
+            .mapLatest { load(it) }
+            .buffer(0)
+            .shareIn(viewModelScope, SharingStarted.Eagerly, 0)
         searchThrottle.postQuery(null)
-        viewModelScope.launch {
-            searchThrottle.requestFlow.collectLatest { query -> load(query) }
-        }
     }
 
     private suspend fun load(query: String?) {

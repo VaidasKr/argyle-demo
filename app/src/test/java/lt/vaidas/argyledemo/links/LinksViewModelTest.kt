@@ -46,10 +46,7 @@ class LinksViewModelTest {
     fun `WHEN init THEN null query is posted to search throttle`() {
         viewModel
 
-        verifySequence {
-            searchThrottle.postQuery(null)
-            searchThrottle.requestFlow
-        }
+        verifyInitSequence()
     }
 
     @Test
@@ -152,30 +149,21 @@ class LinksViewModelTest {
     fun `GIVEN query is white space only WHEN onQueryChanged THEN no query is posted`() {
         viewModel.onQueryChange("    ")
 
-        verifySequence {
-            searchThrottle.postQuery(null)
-            searchThrottle.requestFlow
-        }
+        verifyInitSequence()
     }
 
     @Test
     fun `GIVEN query is single char WHEN onQueryChanged THEN no query is posted`() {
         viewModel.onQueryChange("1")
 
-        verifySequence {
-            searchThrottle.postQuery(null)
-            searchThrottle.requestFlow
-        }
+        verifyInitSequence()
     }
 
     @Test
     fun `GIVEN query has single non space char WHEN onQueryChanged THEN no query is posted`() {
         viewModel.onQueryChange(" 1 ")
 
-        verifySequence {
-            searchThrottle.postQuery(null)
-            searchThrottle.requestFlow
-        }
+        verifyInitSequence()
     }
 
     @Test
@@ -205,11 +193,19 @@ class LinksViewModelTest {
         }
     }
 
+    private fun verifyInitSequence() {
+        verifySequence { initSequence() }
+    }
+
     private fun verifySequenceAfterInit(block: () -> Unit) {
         verifySequence {
-            searchThrottle.postQuery(null)
-            searchThrottle.requestFlow
+            initSequence()
             block()
         }
+    }
+
+    private fun initSequence() {
+        searchThrottle.requestFlow
+        searchThrottle.postQuery(null)
     }
 }
