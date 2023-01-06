@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">ArgyleDemo</string>
+
+    <string name="link_no_name">No name</string>
+    <string name="link_no_kind">None</string>
 </resources>
