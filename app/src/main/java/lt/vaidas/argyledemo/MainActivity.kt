@@ -3,7 +3,6 @@ package lt.vaidas.argyledemo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -17,7 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                rememberSystemUiController().setStatusBarColor(MaterialTheme.colors.background, !isSystemInDarkTheme())
+                rememberSystemUiController().setStatusBarColor(MaterialTheme.colors.background, false)
                 Surface {
                     LinksScreen()
                 }

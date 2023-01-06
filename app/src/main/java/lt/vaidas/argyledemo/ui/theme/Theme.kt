@@ -1,32 +1,21 @@
 package lt.vaidas.argyledemo.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
-private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200,
-    surface = Color(0xFF333A48),
-    background = Color(0xFF333A48)
-)
-
-private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+private val ColorPalette = darkColors(
+    primary = LightGreen,
+    primaryVariant = DarkGreen,
+    secondary = Teal,
+    surface = DarkGrey,
+    background = DarkGrey
 )
 
 @Composable
-fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colors = if (darkTheme) DarkColorPalette else LightColorPalette
-
+fun AppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colors = colors,
+        colors = ColorPalette,
         typography = Typography,
         shapes = Shapes,
         content = content
