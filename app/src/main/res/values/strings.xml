@@ -3,4 +3,7 @@
 
     <string name="link_no_name">No name</string>
     <string name="link_no_kind">None</string>
+
+    <string name="link_error">Failed to load links</string>
+    <string name="link_error_with_query">Failed to load links for search: %s</string>
 </resources>
