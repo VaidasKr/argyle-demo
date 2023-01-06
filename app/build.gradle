@@ -64,10 +64,10 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
 
-    implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
+    implementation "com.github.skydoves:landscapist-glide:2.1.0"
 
     implementation "io.insert-koin:koin-android:3.3.2"
-    implementation "io.insert-koin:koin-androidx-compose:3.3.2"
+    implementation "io.insert-koin:koin-androidx-compose:3.4.1"
 
     implementation "androidx.startup:startup-runtime:1.1.1"
 

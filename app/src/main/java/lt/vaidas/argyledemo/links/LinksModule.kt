@@ -12,6 +12,7 @@ val linkModule = module {
         LinksViewModel(
             useCase = LoadLinksUseCase(get(), LinkItemMapper(resources)),
             errorFactory = LinkLoadErrorFactory(resources),
+            messageFactory = EmptyResultMessageFactory(resources),
             searchThrottle = LinkSearchThrottle(SEARCH_SKIP_DURATION)
         )
     }

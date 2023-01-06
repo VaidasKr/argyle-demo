@@ -14,12 +14,13 @@ import timber.log.Timber
 class LinksViewModel(
     private val useCase: LoadLinksUseCase,
     private val errorFactory: LinkLoadErrorFactory,
+    private val messageFactory: EmptyResultMessageFactory,
     private val searchThrottle: LinkSearchThrottle
 ) : ViewModel() {
     private val _state = MutableStateFlow(
-        LinkState(displayItems = LinkDisplayItems.Placeholders(PLACEHOLDER_COUNT), isLoading = false, loadError = null)
+        LinksState(itemResult = ItemResult.Placeholder(PLACEHOLDER_COUNT), isLoading = false, loadError = null)
     )
-    val state: StateFlow<LinkState> = _state.asStateFlow()
+    val state: StateFlow<LinksState> = _state.asStateFlow()
 
     init {
         searchThrottle.postQuery(null)
@@ -38,7 +39,15 @@ class LinksViewModel(
                     _state.update { it.copy(isLoading = false, loadError = error) }
                 }
             }.onSuccess { items ->
-                _state.value = LinkState(LinkDisplayItems.Items(items), false, null)
+                if (items.isEmpty()) {
+                    _state.value = LinksState(
+                        itemResult = ItemResult.Empty(messageFactory.createFor(query)),
+                        isLoading = false,
+                        loadError = null
+                    )
+                } else {
+                    _state.value = LinksState(itemResult = ItemResult.Items(items), isLoading = false, loadError = null)
+                }
             }
     }
 

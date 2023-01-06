@@ -6,4 +6,10 @@
 
     <string name="link_error">Failed to load links</string>
     <string name="link_error_with_query">Failed to load links for search: %s</string>
+
+    <string name="link_empty">No links found</string>
+    <string name="link_empty_with_query">No links found for search: %s</string>
+
+    <string name="links_label_retry">Retry</string>
+    <string name="links_search_hint">Write to search</string>
 </resources>

@@ -20,10 +20,17 @@ class LinksViewModelTest {
     private val useCase = mockk<LoadLinksUseCase>()
     private val errorFactory = mockk<LinkLoadErrorFactory>()
     private val throttleFlow = MutableSharedFlow<String?>()
+    private val messageFactory = mockk<EmptyResultMessageFactory>()
     private val searchThrottle = mockk<LinkSearchThrottle>(relaxUnitFun = true) {
         every { requestFlow } returns throttleFlow
     }
-    private val viewModel: LinksViewModel get() = LinksViewModel(useCase, errorFactory, searchThrottle)
+    private val viewModel: LinksViewModel
+        get() = LinksViewModel(
+            useCase,
+            errorFactory,
+            messageFactory,
+            searchThrottle
+        )
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
@@ -31,7 +38,7 @@ class LinksViewModelTest {
     @Test
     fun `WHEN init THEN state has placeholder items`() = runTest {
         viewModel.state.testFlow(this) { states ->
-            states.assertLast(LinkState(LinkDisplayItems.Placeholders(10), false, null), 1)
+            states.assertLast(LinksState(ItemResult.Placeholder(10), false, null), 1)
         }
     }
 
@@ -53,11 +60,11 @@ class LinksViewModelTest {
             viewModel.state.testFlow(this) { states ->
                 throttleFlow.emit("query")
 
-                states.assertLast(LinkState(LinkDisplayItems.Placeholders(10), isLoading = true, loadError = null), 2)
-                val value = mockk<List<LinkItem>>()
+                states.assertLast(LinksState(ItemResult.Placeholder(10), isLoading = true, loadError = null), 2)
+                val value = listOf(mockk<LinkItem>())
                 deferred.complete(value)
 
-                states.assertLast(LinkState(LinkDisplayItems.Items(value), isLoading = false, loadError = null), 3)
+                states.assertLast(LinksState(ItemResult.Items(value), isLoading = false, loadError = null), 3)
             }
         }
 
@@ -71,12 +78,31 @@ class LinksViewModelTest {
             viewModel.state.testFlow(this) { states ->
                 throttleFlow.emit("query")
 
-                states.assertLast(LinkState(LinkDisplayItems.Placeholders(10), isLoading = true, loadError = null), 2)
+                states.assertLast(LinksState(ItemResult.Placeholder(10), isLoading = true, loadError = null), 2)
                 val exception = IOException()
                 deferred.completeExceptionally(exception)
 
                 states.assertLast(
-                    LinkState(LinkDisplayItems.Placeholders(10), isLoading = false, loadError = loadError),
+                    LinksState(ItemResult.Placeholder(10), isLoading = false, loadError = loadError),
+                    3
+                )
+            }
+        }
+
+    @Test
+    fun `GIVEN queries posted in requestFlow AND use case result is empty WHEN init THEN result item is empty`() =
+        runTest {
+            val deferred = CompletableDeferred<List<LinkItem>>()
+            coEvery { useCase.load("query") } coAnswers { deferred.await() }
+            every { messageFactory.createFor("query") } returns "Not found for query"
+            viewModel.state.testFlow(this) { states ->
+                throttleFlow.emit("query")
+
+                states.assertLast(LinksState(ItemResult.Placeholder(10), isLoading = true, loadError = null), 2)
+                deferred.complete(emptyList())
+
+                states.assertLast(
+                    LinksState(ItemResult.Empty("Not found for query"), isLoading = false, loadError = null),
                     3
                 )
             }
@@ -91,22 +117,22 @@ class LinksViewModelTest {
             coEvery { useCase.load("query2") } coAnswers { deferredSecond.await() }
             viewModel.state.testFlow(this) { states ->
                 throttleFlow.emit("query1")
-                states.assertLast(LinkState(LinkDisplayItems.Placeholders(10), isLoading = true, loadError = null), 2)
+                states.assertLast(LinksState(ItemResult.Placeholder(10), isLoading = true, loadError = null), 2)
 
                 throttleFlow.emit("query2")
-                states.assertLast(LinkState(LinkDisplayItems.Placeholders(10), isLoading = true, loadError = null), 2)
+                states.assertLast(LinksState(ItemResult.Placeholder(10), isLoading = true, loadError = null), 2)
 
                 println("complete first")
-                val itemsForQuery1 = mockk<List<LinkItem>>()
+                val itemsForQuery1 = listOf(mockk<LinkItem>())
                 deferredFirst.complete(itemsForQuery1)
-                states.assertLast(LinkState(LinkDisplayItems.Placeholders(10), isLoading = true, loadError = null), 2)
+                states.assertLast(LinksState(ItemResult.Placeholder(10), isLoading = true, loadError = null), 2)
 
                 println("complete second")
-                val itemsForQuery2 = mockk<List<LinkItem>>()
+                val itemsForQuery2 = listOf(mockk<LinkItem>())
                 deferredSecond.complete(itemsForQuery2)
 
                 states.assertLast(
-                    LinkState(LinkDisplayItems.Items(itemsForQuery2), isLoading = false, loadError = null),
+                    LinksState(ItemResult.Items(itemsForQuery2), isLoading = false, loadError = null),
                     3
                 )
             }
