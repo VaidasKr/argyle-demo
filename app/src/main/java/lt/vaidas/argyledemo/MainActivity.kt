@@ -1,4 +1,4 @@
-package lt.vaidas.argyledemo.ui
+package lt.vaidas.argyledemo
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
