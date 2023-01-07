@@ -47,6 +47,9 @@ fun LinkRow(modifier: Modifier = Modifier, link: LinkItem) {
                         .background(MaterialTheme.colors.primary, RoundedCornerShape(4.dp))
                 ) {
                     Icon(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(36.dp),
                         imageVector = Icons.Outlined.Warning,
                         contentDescription = "",
                         tint = MaterialTheme.colors.error

@@ -4,6 +4,13 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
+def localProperties = new Properties()
+try {
+    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+} catch (Exception e) {
+    logger.warn("No Local Properties File Found!")
+}
+
 android {
     compileSdk 33
 
@@ -18,11 +25,17 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        if (!localProperties['apiKeySecret']) {
+            logger.warn('apiKeySecret must be set for API authorization. ' +
+                    'You can add it to local.properties. ' +
+                    'Example: apiKeySecret=[value]')
+        }
+        buildConfigField("String", "API_KEY_SECRET", "\"" + localProperties['apiKeySecret'] + "\"")
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

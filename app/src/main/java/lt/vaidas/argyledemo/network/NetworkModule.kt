@@ -3,6 +3,7 @@ package lt.vaidas.argyledemo.network
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import lt.vaidas.argyledemo.BuildConfig
 import lt.vaidas.argyledemo.links.LinksService
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -18,7 +19,7 @@ private val json = Json { ignoreUnknownKeys = true }
 val networkModule = module {
     single {
         val authInterceptor =
-            AuthInterceptor(CredentialsUseCase("9b40eed7b1d14f16ba3abfad216167e8", "kXatSEqBrGIaHeCp"))
+            AuthInterceptor(CredentialsUseCase("9b40eed7b1d14f16ba3abfad216167e8", BuildConfig.API_KEY_SECRET))
         val loggingInterceptor = HttpLoggingInterceptor { Timber.d(it) }
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
         val client = OkHttpClient.Builder()
